@@ -16,7 +16,7 @@ sysinfo.txt
 /*.user
 /*.unityproj
 /*.booproj
-
+[Bb]in/
 
 # OS generated
 .DS_Store*
