@@ -6,26 +6,23 @@ namespace ControlStrings
 
     public class ControlStringMatcherCollection : IControlStringMatcher
     {
-        public IEnumerable<IControlStringMatcher> ControlStringMatchers { get; set; }
-
         public ControlStringMatcherCollection(IEnumerable<IControlStringMatcher> controlStringMatchers)
         {
             ControlStringMatchers = controlStringMatchers;
         }
 
-        public bool Matches(ControlString controlString)
-        {
-            return ControlStringMatchers.Any(x => x.Matches(controlString));
-        }
+        public IEnumerable<IControlStringMatcher> ControlStringMatchers { get; set; }
 
         public string Match(ControlString controlString)
         {
             if (!Matches(controlString))
             {
-                throw new ArgumentException("Argument cannot be matched by this matcher.", "controlString");
+                throw new ArgumentException("Argument cannot be matched by this matcher.", nameof(controlString));
             }
 
             return ControlStringMatchers.First(x => x.Matches(controlString)).Match(controlString);
         }
+
+        public bool Matches(ControlString controlString) => ControlStringMatchers.Any(x => x.Matches(controlString));
     }
 }

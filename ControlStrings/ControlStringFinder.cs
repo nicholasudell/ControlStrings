@@ -7,9 +7,10 @@ namespace ControlStrings
     {
         readonly char controlStringStarter;
         readonly char controlStringTerminator;
-        readonly char valueSeparator;
         readonly char specialStringStarter;
         readonly char specialStringTerminator;
+        readonly char valueSeparator;
+
         public ControlStringFinder(char controlStringStarter, char valueSeparator, char controlStringTerminator, char specialStringStarter, char specialStringTerminator)
         {
             this.controlStringStarter = controlStringStarter;
@@ -48,7 +49,6 @@ namespace ControlStrings
                     int prependLength = prependSpecial.Length == 0 ? 0 : prependSpecial.Length + 2;
                     int postpendLength = postpendSpecial.Length == 0 ? 0 : postpendSpecial.Length + 2;
 
-
                     var values = new Queue<string>(internalString.Substring(prependLength, internalString.Length - postpendLength - prependLength).Split(valueSeparator));
 
                     yield return new ControlString(i, end - i + 1, values);
@@ -56,30 +56,6 @@ namespace ControlStrings
                     i = end;
                 }
             }
-        }
-
-        public string FindPrependingSpecial(string input)
-        {
-            if (input[0] == specialStringStarter)
-            {
-                int length = -1;
-
-                for (var x = 1; x < input.Length; x++)
-                {
-                    if (input[x] == specialStringTerminator)
-                    {
-                        length = x;
-                        break;
-                    }
-                }
-
-                if (length != -1)
-                {
-                    return input.Substring(1, length - 1);
-                }
-            }
-
-            return string.Empty;
         }
 
         public string FindPostpendingSpecial(string input)
@@ -100,6 +76,30 @@ namespace ControlStrings
                 if (start != -1)
                 {
                     return input.Substring(start + 1, input.Length - start - 2);
+                }
+            }
+
+            return string.Empty;
+        }
+
+        public string FindPrependingSpecial(string input)
+        {
+            if (input[0] == specialStringStarter)
+            {
+                int length = -1;
+
+                for (var x = 1; x < input.Length; x++)
+                {
+                    if (input[x] == specialStringTerminator)
+                    {
+                        length = x;
+                        break;
+                    }
+                }
+
+                if (length != -1)
+                {
+                    return input.Substring(1, length - 1);
                 }
             }
 

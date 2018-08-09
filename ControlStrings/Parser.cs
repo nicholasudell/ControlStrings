@@ -19,7 +19,6 @@
 
             foreach (var controlString in controlStrings)
             {
-
                 if (matcher.Matches(controlString))
                 {
                     var originalString = input.Substring(controlString.Index, controlString.Length);

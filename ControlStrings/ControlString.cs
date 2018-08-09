@@ -5,10 +5,6 @@ namespace ControlStrings
 
     public class ControlString
     {
-        public int Index { get; set; }
-
-        public Queue<string> Values { get; set; }
-
         public ControlString(int index, int length, Queue<string> values)
         {
             Index = index;
@@ -16,14 +12,20 @@ namespace ControlStrings
             Length = length;
         }
 
+        public int Index { get; set; }
+
+        public int Length { get; set; }
+
         public ControlString NextControlString
         {
             get
             {
-                return new ControlString(Index + Values.Peek().Length, Length - Values.Peek().Length, new Queue<string>(Values.Skip(1)));
+                var value = Values.Peek();
+
+                return new ControlString(Index + value.Length, Length - value.Length, new Queue<string>(Values.Skip(1)));
             }
         }
 
-        public int Length { get; set; }
+        public Queue<string> Values { get; set; }
     }
 }

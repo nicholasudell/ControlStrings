@@ -4,19 +4,24 @@ namespace ControlStrings
 
     public class ContextControlStringMatcher : IControlStringMatcher
     {
+        public ContextControlStringMatcher(string context, IControlStringMatcher matcher)
+        {
+            Context = context;
+            Matcher = matcher ?? throw new ArgumentNullException(nameof(matcher));
+        }
+
         public string Context { get; set; }
 
         public IControlStringMatcher Matcher { get; private set; }
 
-        public ContextControlStringMatcher(string context, IControlStringMatcher matcher)
+        public string Match(ControlString controlString)
         {
-            if (matcher == null)
+            if (!Matches(controlString))
             {
-                throw new ArgumentNullException("matcher");
+                throw new ArgumentException("Argument cannot be matched by this matcher.", nameof(controlString));
             }
 
-            Context = context;
-            Matcher = matcher;
+            return Matcher.Match(controlString.NextControlString);
         }
 
         public bool Matches(ControlString controlString)
@@ -29,16 +34,6 @@ namespace ControlStrings
             {
                 throw new ControlStringParseException("Error processing controlString " + string.Join(":", controlString.Values.ToArray()) + ".\n\r" + e.Message, e);
             }
-        }
-
-        public string Match(ControlString controlString)
-        {
-            if (!Matches(controlString))
-            {
-                throw new ArgumentException("Argument cannot be matched by this matcher.", "controlString");
-            }
-
-            return Matcher.Match(controlString.NextControlString);
         }
     }
 }
