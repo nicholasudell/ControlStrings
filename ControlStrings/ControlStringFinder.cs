@@ -5,9 +5,9 @@ namespace ControlStrings
 
     public class ControlStringFinder
     {
-        char controlStringStarter;
-        char controlStringTerminator;
-        char valueSeparator;
+        readonly char controlStringStarter;
+        readonly char controlStringTerminator;
+        readonly char valueSeparator;
         readonly char specialStringStarter;
         readonly char specialStringTerminator;
         public ControlStringFinder(char controlStringStarter, char valueSeparator, char controlStringTerminator, char specialStringStarter, char specialStringTerminator)
