@@ -175,7 +175,7 @@ namespace ControlStrings.Example
             }
 
             public string FullName => 
-                new Parser(Matchers).Parse("{Prefix[ ]}{Name}{[ ]Postfix}, {Rank}");
+                new Parser(Matchers, new ITransformer[0]).Parse("{Prefix[ ]}{Name}{[ ]Postfix}, {Rank}");
 
             public ControlStringMatcherCollection Matchers { get; set; }
             public Pronoun Pronouns { get; set; }
@@ -359,13 +359,17 @@ namespace ControlStrings.Example
             var person = new PersonFactory().Create();
             var item = new ItemFactory().Create();
 
-            var parser = new Parser(new ControlStringMatcherCollection(new List<IControlStringMatcher>()
-            {
-                new ContextControlStringMatcher("Person",  person),
-                new ContextControlStringMatcher("Item", item)
-            }));
+            var parser = new Parser
+            (
+                new ControlStringMatcherCollection(new List<IControlStringMatcher>()
+                {
+                    new ContextControlStringMatcher("Person",  person),
+                    new ContextControlStringMatcher("Item", item)
+                }), 
+                new[] { new StartUpperTransformer() }
+            );
 
-            return parser.Parse("Before you stands {Person:FullName}.\n\n{Person:Pronoun:Singular} bring{Person:Pronoun:VerbEnding} you a gift, {Item:FullName}. This {Item:Item} is quite valuable.\n\nShould we kill {Person:Pronoun:SingularObject}?");
+            return parser.Parse("Before you stands {Person:FullName}.\n\n{Person:Pronoun:Singular|StartUpper} bring{Person:Pronoun:VerbEnding} you a gift, {Item:FullName}. This {Item:Item} is quite valuable.\n\nShould we kill {Person:Pronoun:SingularObject}?");
         }
     }
 }
