@@ -193,6 +193,13 @@ namespace ControlStrings.Example
             public bool Matches(ControlString controlString) => Matchers.Matches(controlString);
         }
 
+        private enum Gender
+        {
+            Male,
+            Female,
+            Neutral
+        }
+
         class PersonFactory : IFactory<Person>
         {
             readonly List<string> maleNames = new List<string>()
@@ -223,27 +230,80 @@ namespace ControlStrings.Example
                 "Lord"
             };
 
+            readonly List<string> femaleNames = new List<string>()
+            {
+                "Alice",
+                "Alana",
+                "Barbara"
+            };
+
+            readonly List<string> femalePostfixes = new List<string>()
+            {
+                "Fairest of all",
+                "The Iron Fist",
+                "The Short"
+            };
+
+            readonly List<string> femalePrefixes = new List<string>()
+            {
+                "The Honourable",
+                "The Barbarous",
+                ""
+            };
+
+            readonly List<string> femaleRanks = new List<string>()
+            {
+                "Earl",
+                "Duchess",
+                "Lady"
+            };
+
             public PersonFactory()
             {
                 PronounFactory = new PronounFactory();
             }
 
-            public IFactory<Pronoun> PronounFactory { get; set; }
+            public IFactory<Pronoun, Gender> PronounFactory { get; set; }
 
-            public Person Create() => new Person(PronounFactory.Create())
+            public Person Create()
             {
-                postfix = malePostfixes.Random(),
-                name = maleNames.Random(),
-                rank = maleRanks.Random(),
-                prefix = malePrefixes.Random(),
-            };
+                var gender = Enum.GetValues(typeof(Gender)).Cast<Gender>().Random();
+
+                switch(gender)
+                {
+                    case Gender.Female:
+                        return new Person(PronounFactory.Create(gender))
+                        {
+                            postfix = femalePostfixes.Random(),
+                            name = femaleNames.Random(),
+                            rank = femaleRanks.Random(),
+                            prefix = femalePrefixes.Random(),
+                        };
+                    case Gender.Male:
+                        return new Person(PronounFactory.Create(gender))
+                        {
+                            postfix = malePostfixes.Random(),
+                            name = maleNames.Random(),
+                            rank = maleRanks.Random(),
+                            prefix = malePrefixes.Random(),
+                        };
+                    default:
+                        return new Person(PronounFactory.Create(gender))
+                        {
+                            postfix = malePostfixes.Random(),
+                            name = maleNames.Random(),
+                            rank = maleRanks.Random(),
+                            prefix = malePrefixes.Random(),
+                        };
+                }
+            }
         }
 
         class Pronoun : IControlStringMatcher
         {
             readonly IControlStringMatcher matcher;
 
-            public Pronoun(string singular, string singularObject, string possessive, string reflexive)
+            public Pronoun(string singular, string singularObject, string possessive, string reflexive, bool verbsEndInS)
             {
                 Singular = singular;
                 SingularObject = singularObject;
@@ -255,7 +315,8 @@ namespace ControlStrings.Example
                 new ValueControlStringMatcher("Singular", ()=> Singular),
                 new ValueControlStringMatcher("SingularObject", ()=> SingularObject),
                 new ValueControlStringMatcher("Possessive", ()=> Possessive),
-                new ValueControlStringMatcher("Reflexive", ()=> Reflexive)
+                new ValueControlStringMatcher("Reflexive", ()=> Reflexive),
+                new ContextControlStringMatcher("VerbEnding", new FuncControlStringMatcher(x=> verbsEndInS ? "s" :string.Empty,x=> true))
             });
             }
 
@@ -269,11 +330,26 @@ namespace ControlStrings.Example
             public bool Matches(ControlString controlString) => matcher.Matches(controlString);
         }
 
-        class PronounFactory : IFactory<Pronoun>
+        class PronounFactory : IFactory<Pronoun,Gender>
         {
-            public Pronoun Create() => MalePronoun();
+            public Pronoun Create(Gender gender)
+            {
+                switch(gender)
+                {
+                    case (Gender.Male):
+                        return MalePronoun();
+                    case (Gender.Female):
+                        return FemalePronoun();
+                    default:
+                        return NeutralPronoun();
+                }
+            } 
 
-            Pronoun MalePronoun() => new Pronoun("he", "him", "his", "himself");
+            Pronoun MalePronoun() => new Pronoun("he", "him", "his", "himself", true);
+
+            Pronoun FemalePronoun() => new Pronoun("she", "her", "her", "herself", true);
+
+            Pronoun NeutralPronoun() => new Pronoun("they", "them", "their", "themself", false);
         }
 
         #endregion Model
@@ -289,7 +365,7 @@ namespace ControlStrings.Example
                 new ContextControlStringMatcher("Item", item)
             }));
 
-            return parser.Parse("Before you stands {Person:FullName}.\n\n{Person:Pronoun:Singular} brings you a gift, {Item:FullName}. This {Item:Item} is quite valuable.\n\nShould we kill {Person:Pronoun:SingularObject}?");
+            return parser.Parse("Before you stands {Person:FullName}.\n\n{Person:Pronoun:Singular} bring{Person:Pronoun:VerbEnding} you a gift, {Item:FullName}. This {Item:Item} is quite valuable.\n\nShould we kill {Person:Pronoun:SingularObject}?");
         }
     }
 }
