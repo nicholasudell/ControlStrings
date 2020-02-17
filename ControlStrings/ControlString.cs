@@ -8,7 +8,7 @@ namespace ControlStrings
         public ControlString(int index, int length, Queue<string> values)
         {
             Index = index;
-            Values = values;
+            Values = values ?? throw new System.ArgumentNullException(nameof(values));
             Length = length;
         }
 
