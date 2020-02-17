@@ -5,10 +5,11 @@ namespace ControlStrings
 
     public class ControlString
     {
-        public ControlString(int index, int length, Queue<string> values)
+        public ControlString(int index, int length, Queue<string> values, Queue<string> transformers)
         {
             Index = index;
             Values = values;
+            Transformers = transformers;
             Length = length;
         }
 
@@ -22,10 +23,11 @@ namespace ControlStrings
             {
                 var value = Values.Peek();
 
-                return new ControlString(Index + value.Length, Length - value.Length, new Queue<string>(Values.Skip(1)));
+                return new ControlString(Index + value.Length, Length - value.Length, new Queue<string>(Values.Skip(1)), Transformers);
             }
         }
 
         public Queue<string> Values { get; set; }
+        public Queue<string> Transformers { get; }
     }
 }
