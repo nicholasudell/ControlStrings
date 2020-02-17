@@ -28,3 +28,8 @@ ehthumbs.db
 [Tt]humbs.db
 
 
+Runner/bin/Debug/netcoreapp2.1/ControlStrings.dll
+Runner/bin/Debug/netcoreapp2.1/ControlStrings.pdb
+Runner/bin/Debug/netcoreapp2.1/Runner.dll
+Runner/bin/Debug/netcoreapp2.1/Runner.pdb
+Runner/bin/Debug/netcoreapp2.1/Runner.runtimeconfig.dev.json
