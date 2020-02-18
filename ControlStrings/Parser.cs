@@ -2,16 +2,21 @@
 {
     public class Parser
     {
+        readonly IControlStringFinder finder;
         readonly IControlStringMatcher matcher;
 
-        public Parser(IControlStringMatcher matcher)
+        public Parser(IControlStringFinder finder, IControlStringMatcher matcher)
         {
-            this.matcher = matcher;
+            this.finder = finder ?? throw new System.ArgumentNullException(nameof(finder));
+            this.matcher = matcher ?? throw new System.ArgumentNullException(nameof(matcher));
         }
 
         public string Parse(string input)
         {
-            var finder = new ControlStringFinder('{', ':', '}', '[', ']');
+            if (input is null)
+            {
+                throw new System.ArgumentNullException(nameof(input));
+            }
 
             var controlStrings = finder.FindAllControlStrings(input);
 

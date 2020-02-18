@@ -6,16 +6,26 @@ namespace ControlStrings
     {
         public ContextControlStringMatcher(string context, IControlStringMatcher matcher)
         {
+            if (string.IsNullOrEmpty(context))
+            {
+                throw new ArgumentException("Argument cannot be null or the empty string.", nameof(context));
+            }
+
             Context = context;
             Matcher = matcher ?? throw new ArgumentNullException(nameof(matcher));
         }
 
         public string Context { get; set; }
 
-        public IControlStringMatcher Matcher { get; private set; }
+        public IControlStringMatcher Matcher { get; }
 
         public string Match(ControlString controlString)
         {
+            if (controlString is null)
+            {
+                throw new ArgumentNullException(nameof(controlString));
+            }
+
             if (!Matches(controlString))
             {
                 throw new ArgumentException("Argument cannot be matched by this matcher.", nameof(controlString));
@@ -26,6 +36,11 @@ namespace ControlStrings
 
         public bool Matches(ControlString controlString)
         {
+            if (controlString is null)
+            {
+                throw new ArgumentNullException(nameof(controlString));
+            }
+
             try
             {
                 return controlString.Values.Peek().Equals(Context) && Matcher.Matches(controlString.NextControlString);
