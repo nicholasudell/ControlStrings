@@ -3,7 +3,7 @@ namespace ControlStrings
     using System;
     using System.Collections.Generic;
 
-    public class ControlStringFinder
+    public class ControlStringFinder : IControlStringFinder
     {
         readonly char controlStringStarter;
         readonly char controlStringTerminator;
@@ -113,7 +113,7 @@ namespace ControlStrings
                 throw new ArgumentNullException(nameof(input));
             }
 
-            if(input == string.Empty)
+            if (input == string.Empty)
             {
                 return string.Empty;
             }
