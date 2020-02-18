@@ -18,7 +18,7 @@ namespace ControlStrings.UnitTests
             Should.Throw<ArgumentNullException>(() => unit.FindAllControlStrings(null));
         }
 
-        [Test, AutoData]
+        [Test]
         public void FindAllControlStrings_SplitsControlStringsByControlStringStarterAndTerminator()
         {
             const char ControlStringStarter = '{';
@@ -42,7 +42,7 @@ namespace ControlStrings.UnitTests
             result.Values.Peek().ShouldBe(expected.Values.Peek());
         }
 
-        [Test, AutoData]
+        [Test]
         public void FindAllControlStrings_SplitsFoundControlStringByControlStringSeparator()
         {
             const char ControlStringStarter = '{';
@@ -71,34 +71,141 @@ namespace ControlStrings.UnitTests
             result.Values.Peek().ShouldBe(expected.Values.Peek());
         }
 
-        //[Test]
-        //public void FindPostpendingSpecial_StateUnderTest_ExpectedBehavior()
-        //{
-        //    // Arrange
-        //    var controlStringFinder = new ControlStringFinder(TODO, TODO, TODO, TODO, TODO);
-        //    string input = null;
+        [Test, AutoData]
+        public void FindPostpendingSpecial_WhenInputIsNull_ThrowsArgumentNullException(ControlStringFinder unit)
+        {
+            Should.Throw<ArgumentNullException>(() => unit.FindPostpendingSpecial(null));
+        }
 
-        //    // Act
-        //    var result = controlStringFinder.FindPostpendingSpecial(
-        //        input);
+        [Test]
+        public void FindPostpendingSpecial_FindsInternalString()
+        {
+            const char SpecialStringStarter = '[';
+            const char SpecialStringTerminator = ']';
 
-        //    // Assert
-        //    Assert.Fail();
-        //}
+            var input = $"{SpecialStringStarter}bar{SpecialStringTerminator}";
 
-        //[Test]
-        //public void FindPrependingSpecial_StateUnderTest_ExpectedBehavior()
-        //{
-        //    // Arrange
-        //    var controlStringFinder = new ControlStringFinder(TODO, TODO, TODO, TODO, TODO);
-        //    string input = null;
+            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator);
 
-        //    // Act
-        //    var result = controlStringFinder.FindPrependingSpecial(
-        //        input);
+            var expected = "bar";
 
-        //    // Assert
-        //    Assert.Fail();
-        //}
+            // Act
+            var result = unit.FindPostpendingSpecial(input);
+
+            result.ShouldBe(expected);
+        }
+
+        [Test]
+        public void FindPostpendingSpecial_IgnoresLeadingCharactersOutsideSpecialStringStarter()
+        {
+            const char SpecialStringStarter = '[';
+            const char SpecialStringTerminator = ']';
+
+            var input = $"foo{SpecialStringStarter}bar{SpecialStringTerminator}";
+
+            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator);
+
+            var expected = "bar";
+
+            // Act
+            var result = unit.FindPostpendingSpecial(input);
+
+            result.ShouldBe(expected);
+        }
+
+        [Test]
+        public void FindPostpendingSpecial_WhenInputDoesNotEndWithSpecialStringTerminator_ReturnsEmptyString()
+        {
+            const char SpecialStringStarter = '[';
+            const char SpecialStringTerminator = ']';
+
+            var input = $"{SpecialStringStarter}bar{SpecialStringTerminator}foo";
+
+            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator);
+
+            var expected = string.Empty;
+
+            // Act
+            var result = unit.FindPostpendingSpecial(input);
+
+            result.ShouldBe(expected);
+        }
+
+        [Test, AutoData]
+        public void FindPrependingSpecial_WhenInputIsNull_ThrowsArgumentNullException(ControlStringFinder unit)
+        {
+            Should.Throw<ArgumentNullException>(() => unit.FindPrependingSpecial(null));
+        }
+
+        [Test, AutoData]
+        public void FindPrependingSpecial_WhenInputIsEmptyString_ReturnsEmptyString(ControlStringFinder unit)
+        {
+            var actual = unit.FindPrependingSpecial(string.Empty);
+
+            actual.ShouldBe(string.Empty);
+        }
+
+        [Test, AutoData]
+        public void FindPostpendingSpecial_WhenInputIsEmptyString_ReturnsEmptyString(ControlStringFinder unit)
+        {
+            var actual = unit.FindPostpendingSpecial(string.Empty);
+
+            actual.ShouldBe(string.Empty);
+        }
+
+        [Test]
+        public void FindPrependingSpecial_FindsInternalString()
+        {
+            const char SpecialStringStarter = '[';
+            const char SpecialStringTerminator = ']';
+
+            var input = $"{SpecialStringStarter}bar{SpecialStringTerminator}";
+
+            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator);
+
+            var expected = "bar";
+
+            // Act
+            var result = unit.FindPrependingSpecial(input);
+
+            result.ShouldBe(expected);
+        }
+
+        [Test]
+        public void FindPrependingSpecial_IgnoresTrailingCharactersOutsideSpecialStringTerminator()
+        {
+            const char SpecialStringStarter = '[';
+            const char SpecialStringTerminator = ']';
+
+            var input = $"{SpecialStringStarter}bar{SpecialStringTerminator}foo";
+
+            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator);
+
+            var expected = "bar";
+
+            // Act
+            var result = unit.FindPrependingSpecial(input);
+
+            result.ShouldBe(expected);
+        }
+
+        [Test]
+        public void FindPrependingSpecial_WhenInputDoesNotStartWithSpecialStringStarter_ReturnsEmptyString()
+        {
+            const char SpecialStringStarter = '[';
+            const char SpecialStringTerminator = ']';
+
+            var input = $"foo{SpecialStringStarter}bar{SpecialStringTerminator}";
+
+            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator);
+
+            var expected = string.Empty;
+
+            // Act
+            var result = unit.FindPrependingSpecial(input);
+
+            result.ShouldBe(expected);
+        }
+
     }
 }

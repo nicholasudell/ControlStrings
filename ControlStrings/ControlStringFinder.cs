@@ -34,6 +34,14 @@ namespace ControlStrings
                 throw new ArgumentNullException(nameof(input));
             }
 
+            // Yield return methods doesn't throw any exceptions until you try to access the results
+            // This could happen at any time, including far away from when the error was caused
+            // So we pass error handle normally here and contain the yield return in its own bubble
+            return FindAllControlStringsEnumeratorInternal(input);
+        }
+
+        IEnumerable<ControlString> FindAllControlStringsEnumeratorInternal(string input)
+        {
             for (var index = 0; index < input.Length; index++)
             {
                 if (input[index] == controlStringStarter)
@@ -72,6 +80,16 @@ namespace ControlStrings
 
         public string FindPostpendingSpecial(string input)
         {
+            if (input is null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            if (input == string.Empty)
+            {
+                return string.Empty;
+            }
+
             if (input[input.Length - 1] != specialStringTerminator)
             {
                 return string.Empty;
@@ -90,6 +108,16 @@ namespace ControlStrings
 
         public string FindPrependingSpecial(string input)
         {
+            if (input is null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            if(input == string.Empty)
+            {
+                return string.Empty;
+            }
+
             if (input[0] != specialStringStarter)
             {
                 return string.Empty;
