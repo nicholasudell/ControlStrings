@@ -5,26 +5,23 @@ namespace ControlStrings
 {
     public class Parser
     {
+        readonly IControlStringFinder finder;
         readonly IControlStringMatcher matcher;
         readonly IEnumerable<ITransformer> transformers;
 
-        public Parser(IControlStringMatcher matcher, IEnumerable<ITransformer> transformers)
+        public Parser(IControlStringFinder finder, IControlStringMatcher matcher, IEnumerable<ITransformer> transformers)
         {
-            this.matcher = matcher;
+            this.finder = finder ?? throw new System.ArgumentNullException(nameof(finder));
+            this.matcher = matcher ?? throw new System.ArgumentNullException(nameof(matcher));
             this.transformers = transformers;
         }
 
         public string Parse(string input)
         {
-            var finder = new ControlStringFinder
-            (
-                controlStringStarter: '{',
-                valueSeparator: ':',
-                controlStringTerminator: '}',
-                specialStringStarter: '[',
-                specialStringTerminator: ']',
-                transformerSeparator: '|'
-            );
+            if (input is null)
+            {
+                throw new System.ArgumentNullException(nameof(input));
+            }
 
             var controlStrings = finder.FindAllControlStrings(input);
 

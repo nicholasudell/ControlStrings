@@ -172,10 +172,13 @@ namespace ControlStrings.Example
                     new ValueControlStringMatcher("Name", ()=> name),
                     new ValueControlStringMatcher("FullName", ()=> FullName)
                 });
+
+                parser = new Parser(new ControlStringFinder('{', ':', '}', '[', ']'), Matchers);
             }
 
-            public string FullName => 
-                new Parser(Matchers, new ITransformer[0]).Parse("{Prefix[ ]}{Name}{[ ]Postfix}, {Rank}");
+            readonly Parser parser;
+
+            public string FullName => parser.Parse("{Prefix[ ]}{Name}{[ ]Postfix}, {Rank}");
 
             public ControlStringMatcherCollection Matchers { get; set; }
             public Pronoun Pronouns { get; set; }
@@ -359,13 +362,21 @@ namespace ControlStrings.Example
             var person = new PersonFactory().Create();
             var item = new ItemFactory().Create();
 
-            var parser = new Parser
-            (
+            var parser = new Parser(
+                new ControlStringFinder
+                (
+                    controlStringStarter: '{',
+                    valueSeparator: ':',
+                    controlStringTerminator: '}',
+                    specialStringStarter: '[',
+                    specialStringTerminator: ']',
+                    transformerSeparator: '|'
+                ),
                 new ControlStringMatcherCollection(new List<IControlStringMatcher>()
                 {
                     new ContextControlStringMatcher("Person",  person),
                     new ContextControlStringMatcher("Item", item)
-                }), 
+                }),
                 new[] { new StartUpperTransformer() }
             );
 

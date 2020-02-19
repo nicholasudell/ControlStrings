@@ -17,6 +17,8 @@ sysinfo.txt
 /*.unityproj
 /*.booproj
 ControlStrings/[Bb]in/
+bin/
+obj/
 
 # OS generated
 .DS_Store*

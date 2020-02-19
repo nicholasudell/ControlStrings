@@ -4,7 +4,7 @@ namespace ControlStrings
     using System.Collections.Generic;
     using System.Linq;
 
-    public class ControlStringFinder
+    public class ControlStringFinder : IControlStringFinder
     {
         readonly char controlStringStarter;
         readonly char controlStringTerminator;
@@ -13,7 +13,15 @@ namespace ControlStrings
         readonly char transformerSeparator;
         readonly char valueSeparator;
 
-        public ControlStringFinder(char controlStringStarter, char valueSeparator, char controlStringTerminator, char specialStringStarter, char specialStringTerminator, char transformerSeparator)
+        public ControlStringFinder
+        (
+            char controlStringStarter,
+            char valueSeparator,
+            char controlStringTerminator,
+            char specialStringStarter,
+            char specialStringTerminator,
+            char transformerSeparator
+        )
         {
             this.controlStringStarter = controlStringStarter;
             this.valueSeparator = valueSeparator;
@@ -25,26 +33,26 @@ namespace ControlStrings
 
         public IEnumerable<ControlString> FindAllControlStrings(string input)
         {
-            for (var i = 0; i < input.Length; i++)
+            if (input is null)
             {
-                if (input[i] == controlStringStarter)
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            // Yield return methods doesn't throw any exceptions until you try to access the results
+            // This could happen at any time, including far away from when the error was caused
+            // So we pass error handle normally here and contain the yield return in its own bubble
+            return FindAllControlStringsEnumeratorInternal(input);
+        }
+
+        IEnumerable<ControlString> FindAllControlStringsEnumeratorInternal(string input)
+        {
+            for (var index = 0; index < input.Length; index++)
+            {
+                if (input[index] == controlStringStarter)
                 {
-                    var end = -1;
+                    var end = FindControlStringEnd(input, index);
 
-                    for (var j = i + 1; j < input.Length; j++)
-                    {
-                        if (input[j] == controlStringTerminator)
-                        {
-                            end = j;
-                            break;
-                        }
-                    }
-                    if (end == -1)
-                    {
-                        throw new FormatException("Input string has opening control string starter with no matching control string terminator.");
-                    }
-
-                    var internalString = input.Substring(i + 1, end - i - 1);
+                    var internalString = input.Substring(index + 1, end - index - 1);
 
                     var prependSpecial = FindPrependingSpecial(internalString);
                     var postpendSpecial = FindPostpendingSpecial(internalString);
@@ -57,31 +65,48 @@ namespace ControlStrings
                     var values = new Queue<string>(separatedControlStrings.Take(separatedControlStrings.Length-1).Concat(new[] { finalControlStringSplitByTransformerSeparator.First() }));
                     var transformers = new Queue<string>(finalControlStringSplitByTransformerSeparator.Skip(1));
 
-                    yield return new ControlString(i, end - i + 1, values, transformers);
+                    yield return new ControlString(index, end - index + 1, values, transformers);
 
-                    i = end;
+                    index = end;
                 }
             }
         }
 
+        private int FindControlStringEnd(string input, int startingIndex)
+        {
+            for (var index = startingIndex + 1; index < input.Length; index++)
+            {
+                if (input[index] == controlStringTerminator)
+                {
+                    return index;
+                }
+            }
+
+            throw new FormatException("Input string has opening control string starter with no matching control string terminator.");
+        }
+
         public string FindPostpendingSpecial(string input)
         {
-            if (input[input.Length - 1] == specialStringTerminator)
+            if (input is null)
             {
-                int start = -1;
+                throw new ArgumentNullException(nameof(input));
+            }
 
-                for (var x = input.Length - 2; x >= 0; x--)
-                {
-                    if (input[x] == specialStringStarter)
-                    {
-                        start = x;
-                        break;
-                    }
-                }
+            if (input == string.Empty)
+            {
+                return string.Empty;
+            }
 
-                if (start != -1)
+            if (input[input.Length - 1] != specialStringTerminator)
+            {
+                return string.Empty;
+            }
+
+            for (var index = input.Length - 2; index >= 0; index--)
+            {
+                if (input[index] == specialStringStarter)
                 {
-                    return input.Substring(start + 1, input.Length - start - 2);
+                    return input.Substring(index + 1, input.Length - index - 2);
                 }
             }
 
@@ -90,22 +115,26 @@ namespace ControlStrings
 
         public string FindPrependingSpecial(string input)
         {
-            if (input[0] == specialStringStarter)
+            if (input is null)
             {
-                int length = -1;
+                throw new ArgumentNullException(nameof(input));
+            }
 
-                for (var x = 1; x < input.Length; x++)
-                {
-                    if (input[x] == specialStringTerminator)
-                    {
-                        length = x;
-                        break;
-                    }
-                }
+            if (input == string.Empty)
+            {
+                return string.Empty;
+            }
 
-                if (length != -1)
+            if (input[0] != specialStringStarter)
+            {
+                return string.Empty;
+            }
+
+            for (var index = 1; index < input.Length; index++)
+            {
+                if (input[index] == specialStringTerminator)
                 {
-                    return input.Substring(1, length - 1);
+                    return input.Substring(1, index - 1);
                 }
             }
 

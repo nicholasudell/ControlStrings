@@ -15,6 +15,11 @@ namespace ControlStrings
 
         public string Match(ControlString controlString)
         {
+            if (controlString is null)
+            {
+                throw new ArgumentNullException(nameof(controlString));
+            }
+
             if (!Matches(controlString))
             {
                 throw new ArgumentException("Argument cannot be matched by this matcher.", nameof(controlString));
@@ -23,6 +28,14 @@ namespace ControlStrings
             return ControlStringMatchers.First(x => x.Matches(controlString)).Match(controlString);
         }
 
-        public bool Matches(ControlString controlString) => ControlStringMatchers.Any(x => x.Matches(controlString));
+        public bool Matches(ControlString controlString)
+        {
+            if (controlString is null)
+            {
+                throw new ArgumentNullException(nameof(controlString));
+            }
+
+            return ControlStringMatchers.Any(x => x.Matches(controlString));
+        }
     }
 }
