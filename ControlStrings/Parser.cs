@@ -7,13 +7,13 @@ namespace ControlStrings
     {
         readonly IControlStringFinder finder;
         readonly IControlStringMatcher matcher;
-        readonly IEnumerable<ITransformer> transformers;
+        readonly ITransformer transformer;
 
-        public Parser(IControlStringFinder finder, IControlStringMatcher matcher, IEnumerable<ITransformer> transformers)
+        public Parser(IControlStringFinder finder, IControlStringMatcher matcher, ITransformer transformer)
         {
             this.finder = finder ?? throw new System.ArgumentNullException(nameof(finder));
             this.matcher = matcher ?? throw new System.ArgumentNullException(nameof(matcher));
-            this.transformers = transformers;
+            this.transformer = transformer;
         }
 
         public string Parse(string input)
@@ -40,16 +40,15 @@ namespace ControlStrings
 
                     matchedString = string.IsNullOrEmpty(matchedString) ? matchedString : specialPrepending + matchedString + specialPostpending;
 
-                    foreach(var transformString in controlString.Transformers)
-                    {
-                        var transformer = transformers.SingleOrDefault(x => x.Matches(transformString));
 
-                        if(transformer == null)
+                    foreach(var transformCode in controlString.Transformers)
+                    {
+                        if(!transformer.Matches(transformCode))
                         {
-                            throw new MissingTransformerException($"Could not find a transformer that matched the string {transformString}");
+                            throw new MissingTransformerException($"Could not find a transformer that matched the string {transformCode}");
                         }
 
-                        matchedString = transformer.Transform(matchedString);
+                        matchedString = transformer.Transform(transformCode, matchedString);
                     }
 
                     result = result.Replace(originalString, matchedString);

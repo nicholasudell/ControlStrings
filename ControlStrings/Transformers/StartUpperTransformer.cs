@@ -2,9 +2,32 @@
 
 namespace ControlStrings
 {
+
     public class StartUpperTransformer : ITransformer
     {
-        public bool Matches(string transformString) => transformString.Equals("StartUpper");
-        public string Transform(string input) => input.First().ToString().ToUpper() + input.Substring(1);
+        public bool Matches(string transformCode)
+        {
+            if (transformCode is null)
+            {
+                throw new System.ArgumentNullException(nameof(transformCode));
+            }
+
+            return transformCode.Equals("StartUpper");
+        }
+
+        public string Transform(string transformCode, string input)
+        {
+            if (input is null)
+            {
+                throw new System.ArgumentNullException(nameof(input));
+            }
+
+            if(input == string.Empty)
+            {
+                return string.Empty;
+            }
+
+            return input.First().ToString().ToUpper() + input.Substring(1);
+        }
     }
 }

@@ -2,8 +2,8 @@
 {
     public interface ITransformer
     {
-        string Transform(string input);
+        string Transform(string transformCode, string input);
 
-        bool Matches(string transformString);
+        bool Matches(string transformCode);
     }
 }
