@@ -11,7 +11,7 @@ namespace ControlStrings
             ControlStringMatchers = controlStringMatchers;
         }
 
-        public IEnumerable<IControlStringMatcher> ControlStringMatchers { get; set; }
+        public IEnumerable<IControlStringMatcher> ControlStringMatchers { get; }
 
         public string Match(ControlString controlString)
         {

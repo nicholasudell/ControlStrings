@@ -26,13 +26,13 @@ namespace ControlStrings.UnitTests
 
             var input = $"{ControlStringStarter}foo{ControlStringTerminator}";
 
-            var unit = new ControlStringFinder(ControlStringStarter, 'a', ControlStringTerminator, 'b', 'c');
+            var unit = new ControlStringFinder(ControlStringStarter, 'a', ControlStringTerminator, 'b', 'c', 'd');
 
             var valueQueue = new Queue<string>();
 
             valueQueue.Enqueue("foo");
 
-            var expected = new ControlString(0,5,valueQueue);
+            var expected = new ControlString(0,5,valueQueue, new Queue<string>());
 
             // Act
             var result = unit.FindAllControlStrings(input).Single();
@@ -51,14 +51,14 @@ namespace ControlStrings.UnitTests
 
             var input = $"{ControlStringStarter}foo{ControlStringSeparator}bar{ControlStringTerminator}";
 
-            var unit = new ControlStringFinder(ControlStringStarter, ControlStringSeparator, ControlStringTerminator, 'b', 'c');
+            var unit = new ControlStringFinder(ControlStringStarter, ControlStringSeparator, ControlStringTerminator, 'b', 'c', 'd');
 
             var valueQueue = new Queue<string>();
 
             valueQueue.Enqueue("foo");
             valueQueue.Enqueue("bar");
 
-            var expected = new ControlString(0, 9, valueQueue);
+            var expected = new ControlString(0, 9, valueQueue, new Queue<string>());
 
             // Act
             var result = unit.FindAllControlStrings(input).Single();
@@ -85,7 +85,7 @@ namespace ControlStrings.UnitTests
 
             var input = $"{SpecialStringStarter}bar{SpecialStringTerminator}";
 
-            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator);
+            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator, 'd');
 
             var expected = "bar";
 
@@ -103,7 +103,7 @@ namespace ControlStrings.UnitTests
 
             var input = $"foo{SpecialStringStarter}bar{SpecialStringTerminator}";
 
-            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator);
+            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator, 'd');
 
             var expected = "bar";
 
@@ -121,7 +121,7 @@ namespace ControlStrings.UnitTests
 
             var input = $"{SpecialStringStarter}bar{SpecialStringTerminator}foo";
 
-            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator);
+            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator, 'd');
 
             var expected = string.Empty;
 
@@ -161,7 +161,7 @@ namespace ControlStrings.UnitTests
 
             var input = $"{SpecialStringStarter}bar{SpecialStringTerminator}";
 
-            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator);
+            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator, 'd');
 
             var expected = "bar";
 
@@ -179,7 +179,7 @@ namespace ControlStrings.UnitTests
 
             var input = $"{SpecialStringStarter}bar{SpecialStringTerminator}foo";
 
-            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator);
+            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator, 'd');
 
             var expected = "bar";
 
@@ -197,8 +197,7 @@ namespace ControlStrings.UnitTests
 
             var input = $"foo{SpecialStringStarter}bar{SpecialStringTerminator}";
 
-            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator);
-
+            var unit = new ControlStringFinder('{', ':', '}', SpecialStringStarter, SpecialStringTerminator, 'd');
             var expected = string.Empty;
 
             // Act

@@ -173,7 +173,7 @@ namespace ControlStrings.Example
                     new ValueControlStringMatcher("FullName", ()=> FullName)
                 });
 
-                parser = new Parser(new ControlStringFinder('{', ':', '}', '[', ']'), Matchers);
+                parser = new Parser(new ControlStringFinder('{', ':', '}', '[', ']', '|'), Matchers, new ITransformer[0]);
             }
 
             readonly Parser parser;

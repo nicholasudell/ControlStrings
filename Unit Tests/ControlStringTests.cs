@@ -12,8 +12,8 @@ namespace ControlStrings.UnitTests
     public class ControlStringTests
     {
         [Test, AutoData]
-        public void Constructor_ShouldThrowExceptionsForMissingValueQueue(int index, int length) => 
-            Should.Throw<ArgumentNullException>(() => new ControlString(index, length, null));
+        public void Constructor_ShouldThrowExceptionsForMissingValueQueue(int index, int length, Queue<string> values) => 
+            Should.Throw<ArgumentNullException>(() => new ControlString(index, length, null, values));
 
         [Test, AutoData]
         public void NextControlString_IncreasesIndexByCurrentValueLength([Frozen] Queue<string> values, ControlString unit, string firstString, string secondString)

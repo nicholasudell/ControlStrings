@@ -3,6 +3,10 @@ using NUnit.Framework;
 using Shouldly;
 using System;
 using Moq;
+using System.Collections.Generic;
+using AutoFixture;
+using AutoFixture.Kernel;
+using System.Reflection;
 
 namespace ControlStrings.UnitTests.Matchers
 {
@@ -18,7 +22,11 @@ namespace ControlStrings.UnitTests.Matchers
 
             var expected = "bar";
 
-            var controlString = new ControlString(0, 3, new System.Collections.Generic.Queue<string>(new[] { unit.Context, expected }));
+            var fixture = new Fixture();
+
+            fixture.Customizations.Add(new InlineConstructorParams<ControlString>(0,3, new Queue<string>(new[] { unit.Context, expected })));
+
+            var controlString = fixture.Create<ControlString>();
 
             unit.Match(controlString);
 
@@ -32,7 +40,11 @@ namespace ControlStrings.UnitTests.Matchers
 
             unit.Context = "foo";
 
-            var controlString = new ControlString(0,3,new System.Collections.Generic.Queue<string>(new[] { unit.Context }));
+            var fixture = new Fixture();
+
+            fixture.Customizations.Add(new InlineConstructorParams<ControlString>(0, 3, new Queue<string>(new[] { unit.Context })));
+
+            var controlString = fixture.Create<ControlString>();
 
             unit.Matches(controlString).ShouldBeTrue();
         }
@@ -44,7 +56,11 @@ namespace ControlStrings.UnitTests.Matchers
 
             unit.Context = "foo";
 
-            var controlString = new ControlString(0, 3, new System.Collections.Generic.Queue<string>(new[] { unit.Context }));
+            var fixture = new Fixture();
+
+            fixture.Customizations.Add(new InlineConstructorParams<ControlString>(0, 3, new Queue<string>(new[] { unit.Context })));
+
+            var controlString = fixture.Create<ControlString>();
 
             unit.Matches(controlString).ShouldBeFalse();
         }
@@ -65,7 +81,12 @@ namespace ControlStrings.UnitTests.Matchers
         public void Matches_WhenFirstValueIsNotContext_ReturnsFalse(ContextControlStringMatcher unit)
         {
             unit.Context = "foo";
-            var controlString = new ControlString(0, 3, new System.Collections.Generic.Queue<string>(new[] { "bar" }));
+
+            var fixture = new Fixture();
+
+            fixture.Customizations.Add(new InlineConstructorParams<ControlString>(0, 3, new Queue<string>(new[] { "bar" })));
+
+            var controlString = fixture.Create<ControlString>();
 
             unit.Matches(controlString).ShouldBeFalse();
         }
@@ -74,7 +95,12 @@ namespace ControlStrings.UnitTests.Matchers
         public void Match_WhenFirstValueIsNotContext_ThrowsInvalidOperationException(ContextControlStringMatcher unit)
         {
             unit.Context = "foo";
-            var controlString = new ControlString(0, 3, new System.Collections.Generic.Queue<string>(new[] { "bar" }));
+
+            var fixture = new Fixture();
+
+            fixture.Customizations.Add(new InlineConstructorParams<ControlString>(0, 3, new Queue<string>(new[] { "bar" })));
+
+            var controlString = fixture.Create<ControlString>();
 
             Should.Throw<ArgumentException>(()=>unit.Match(controlString));
         }

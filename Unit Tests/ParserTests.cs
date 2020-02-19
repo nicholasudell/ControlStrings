@@ -1,9 +1,11 @@
+using AutoFixture;
 using AutoFixture.NUnit3;
 using ControlStrings;
 using Moq;
 using NUnit.Framework;
 using Shouldly;
 using System;
+using System.Collections.Generic;
 
 namespace ControlStrings.UnitTests
 {
@@ -19,7 +21,11 @@ namespace ControlStrings.UnitTests
         [Test, AutoMoqData]
         public void Parse_ReplacesControlStringsInInputWithMatcherOutput([Frozen] IControlStringFinder finder, [Frozen] IControlStringMatcher matcher, Parser unit)
         {
-            var controlString = new ControlString(0, 5, new System.Collections.Generic.Queue<string>(new[] { "foo" }));
+            var fixture = new Fixture();
+
+            fixture.Customizations.Add(new InlineConstructorParams<ControlString>(0, 5, new Queue<string>(new[] { "foo" })));
+
+            var controlString = fixture.Create<ControlString>();
 
             Mock.Get(finder).Setup(x => x.FindAllControlStrings(It.IsAny<string>())).Returns(new[] { controlString });
 

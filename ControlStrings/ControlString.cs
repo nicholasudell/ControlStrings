@@ -13,9 +13,9 @@ namespace ControlStrings
             Length = length;
         }
 
-        public int Index { get; set; }
+        public int Index { get; }
 
-        public int Length { get; set; }
+        public int Length { get; }
 
         public ControlString NextControlString
         {
@@ -27,7 +27,7 @@ namespace ControlStrings
             }
         }
 
-        public Queue<string> Values { get; set; }
+        public Queue<string> Values { get;}
         public Queue<string> Transformers { get; }
     }
 }
