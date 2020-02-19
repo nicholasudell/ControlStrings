@@ -173,7 +173,7 @@ namespace ControlStrings.Example
                     new ValueControlStringMatcher("FullName", ()=> FullName)
                 });
 
-                parser = new Parser(new ControlStringFinder('{', ':', '}', '[', ']', '|'), Matchers, new ITransformer[0]);
+                parser = new Parser(new ControlStringFinder('{', ':', '}', '[', ']', '|'), Matchers, new NullTransformer());
             }
 
             readonly Parser parser;
@@ -377,7 +377,7 @@ namespace ControlStrings.Example
                     new ContextControlStringMatcher("Person",  person),
                     new ContextControlStringMatcher("Item", item)
                 }),
-                new[] { new StartUpperTransformer() }
+                new StartUpperTransformer()
             );
 
             return parser.Parse("Before you stands {Person:FullName}.\n\n{Person:Pronoun:Singular|StartUpper} bring{Person:Pronoun:VerbEnding} you a gift, {Item:FullName}. This {Item:Item} is quite valuable.\n\nShould we kill {Person:Pronoun:SingularObject}?");
