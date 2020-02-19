@@ -1,14 +1,19 @@
-﻿namespace ControlStrings
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace ControlStrings
 {
     public class Parser
     {
         readonly IControlStringFinder finder;
         readonly IControlStringMatcher matcher;
+        readonly ITransformer transformer;
 
-        public Parser(IControlStringFinder finder, IControlStringMatcher matcher)
+        public Parser(IControlStringFinder finder, IControlStringMatcher matcher, ITransformer transformer)
         {
             this.finder = finder ?? throw new System.ArgumentNullException(nameof(finder));
             this.matcher = matcher ?? throw new System.ArgumentNullException(nameof(matcher));
+            this.transformer = transformer;
         }
 
         public string Parse(string input)
@@ -31,11 +36,22 @@
                     var specialPrepending = finder.FindPrependingSpecial(originalString.Substring(1, originalString.Length - 2));
                     var specialPostpending = finder.FindPostpendingSpecial(originalString.Substring(1, originalString.Length - 2));
 
-                    var newString = matcher.Match(controlString);
+                    var matchedString = matcher.Match(controlString);
 
-                    newString = string.IsNullOrEmpty(newString) ? newString : specialPrepending + newString + specialPostpending;
+                    matchedString = string.IsNullOrEmpty(matchedString) ? matchedString : specialPrepending + matchedString + specialPostpending;
 
-                    result = result.Replace(originalString, newString);
+
+                    foreach(var transformCode in controlString.Transformers)
+                    {
+                        if(!transformer.Matches(transformCode))
+                        {
+                            throw new MissingTransformerException($"Could not find a transformer that matched the string {transformCode}");
+                        }
+
+                        matchedString = transformer.Transform(transformCode, matchedString);
+                    }
+
+                    result = result.Replace(originalString, matchedString);
                 }
             }
 

@@ -1,3 +1,4 @@
+using AutoFixture;
 using AutoFixture.NUnit3;
 using ControlStrings;
 using Moq;
@@ -31,9 +32,14 @@ namespace ControlStrings.UnitTests.Matchers
             Mock.Get(internalMatcher1).Setup(x => x.Matches(It.IsAny<ControlString>())).Returns(false);
             Mock.Get(internalMatcher2).Setup(x => x.Matches(It.IsAny<ControlString>())).Returns(false);
 
-            var unit = new ControlStringMatcherCollection(new[] { internalMatcher1, internalMatcher2 });
+            var fixture = new Fixture();
 
-            var controlString = new ControlString(0, 3, new Queue<string>(new[] { controlStringValue }));
+            fixture.Customizations.Add(new InlineConstructorParams<ControlString>(0, 3, new Queue<string>(new[] { controlStringValue })));
+            fixture.Customizations.Add(new InlineConstructorParams<ControlStringMatcherCollection>((object)new[] { internalMatcher1, internalMatcher2 }));
+
+            var controlString = fixture.Create<ControlString>();
+
+            var unit = fixture.Create<ControlStringMatcherCollection>();
 
             Should.Throw<ArgumentException>(()=>unit.Match(controlString));
         }
@@ -48,9 +54,14 @@ namespace ControlStrings.UnitTests.Matchers
             var internalMatcher2Mock = Mock.Get(internalMatcher2);
             internalMatcher2Mock.Setup(x => x.Matches(It.IsAny<ControlString>())).Returns(true);
 
-            var unit = new ControlStringMatcherCollection(new[] { internalMatcher1, internalMatcher2 });
+            var fixture = new Fixture();
 
-            var controlString = new ControlString(0, 3, new Queue<string>(new[] { controlStringValue }));
+            fixture.Customizations.Add(new InlineConstructorParams<ControlString>(0, 3, new Queue<string>(new[] { controlStringValue })));
+            fixture.Customizations.Add(new InlineConstructorParams<ControlStringMatcherCollection>((object)new[] { internalMatcher1, internalMatcher2 }));
+
+            var controlString = fixture.Create<ControlString>();
+
+            var unit = fixture.Create<ControlStringMatcherCollection>();
 
             unit.Match(controlString);
 
@@ -66,9 +77,14 @@ namespace ControlStrings.UnitTests.Matchers
             internalMatcher1Mock.Setup(x => x.Matches(It.IsAny<ControlString>())).Returns(false);
             Mock.Get(internalMatcher2).Setup(x => x.Matches(It.IsAny<ControlString>())).Returns(true);
 
-            var unit = new ControlStringMatcherCollection(new[] { internalMatcher1, internalMatcher2 });
+            var fixture = new Fixture();
 
-            var controlString = new ControlString(0, 3, new Queue<string>(new[] { controlStringValue }));
+            fixture.Customizations.Add(new InlineConstructorParams<ControlString>(0, 3, new Queue<string>(new[] { controlStringValue })));
+            fixture.Customizations.Add(new InlineConstructorParams<ControlStringMatcherCollection>((object)new[] { internalMatcher1, internalMatcher2 }));
+
+            var controlString = fixture.Create<ControlString>();
+
+            var unit = fixture.Create<ControlStringMatcherCollection>();
 
             unit.Match(controlString);
 
@@ -83,9 +99,14 @@ namespace ControlStrings.UnitTests.Matchers
             Mock.Get(internalMatcher1).Setup(x => x.Matches(It.IsAny<ControlString>())).Returns(false);
             Mock.Get(internalMatcher2).Setup(x => x.Matches(It.IsAny<ControlString>())).Returns(true);
 
-            var unit = new ControlStringMatcherCollection(new[] { internalMatcher1, internalMatcher2 });
+            var fixture = new Fixture();
 
-            var controlString = new ControlString(0, 3, new Queue<string>(new[] { controlStringValue }));
+            fixture.Customizations.Add(new InlineConstructorParams<ControlString>(0, 3, new Queue<string>(new[] { controlStringValue })));
+            fixture.Customizations.Add(new InlineConstructorParams<ControlStringMatcherCollection>((object)new[] { internalMatcher1, internalMatcher2 }));
+
+            var controlString = fixture.Create<ControlString>();
+
+            var unit = fixture.Create<ControlStringMatcherCollection>();
 
             unit.Matches(controlString).ShouldBeTrue();
         }
@@ -98,9 +119,14 @@ namespace ControlStrings.UnitTests.Matchers
             Mock.Get(internalMatcher1).Setup(x => x.Matches(It.IsAny<ControlString>())).Returns(false);
             Mock.Get(internalMatcher2).Setup(x => x.Matches(It.IsAny<ControlString>())).Returns(false);
 
-            var unit = new ControlStringMatcherCollection(new[] { internalMatcher1, internalMatcher2 });
+            var fixture = new Fixture();
 
-            var controlString = new ControlString(0, 3, new Queue<string>(new[] { controlStringValue }));
+            fixture.Customizations.Add(new InlineConstructorParams<ControlString>(0, 3, new Queue<string>(new[] { controlStringValue })));
+            fixture.Customizations.Add(new InlineConstructorParams<ControlStringMatcherCollection>((object)new[] { internalMatcher1, internalMatcher2 }));
+
+            var controlString = fixture.Create<ControlString>();
+
+            var unit = fixture.Create<ControlStringMatcherCollection>();
 
             unit.Matches(controlString).ShouldBeFalse();
         }

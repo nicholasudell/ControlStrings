@@ -2,6 +2,7 @@ namespace ControlStrings
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class ControlStringFinder : IControlStringFinder
     {
@@ -9,6 +10,7 @@ namespace ControlStrings
         readonly char controlStringTerminator;
         readonly char specialStringStarter;
         readonly char specialStringTerminator;
+        readonly char transformerSeparator;
         readonly char valueSeparator;
 
         public ControlStringFinder
@@ -17,7 +19,8 @@ namespace ControlStrings
             char valueSeparator,
             char controlStringTerminator,
             char specialStringStarter,
-            char specialStringTerminator
+            char specialStringTerminator,
+            char transformerSeparator
         )
         {
             this.controlStringStarter = controlStringStarter;
@@ -25,6 +28,7 @@ namespace ControlStrings
             this.controlStringTerminator = controlStringTerminator;
             this.specialStringStarter = specialStringStarter;
             this.specialStringTerminator = specialStringTerminator;
+            this.transformerSeparator = transformerSeparator;
         }
 
         public IEnumerable<ControlString> FindAllControlStrings(string input)
@@ -56,9 +60,12 @@ namespace ControlStrings
                     int prependLength = prependSpecial.Length == 0 ? 0 : prependSpecial.Length + 2;
                     int postpendLength = postpendSpecial.Length == 0 ? 0 : postpendSpecial.Length + 2;
 
-                    var values = new Queue<string>(internalString.Substring(prependLength, internalString.Length - postpendLength - prependLength).Split(valueSeparator));
+                    var separatedControlStrings = internalString.Substring(prependLength, internalString.Length - postpendLength - prependLength).Split(valueSeparator);
+                    var finalControlStringSplitByTransformerSeparator = separatedControlStrings.Last().Split(transformerSeparator);
+                    var values = new Queue<string>(separatedControlStrings.Take(separatedControlStrings.Length-1).Concat(new[] { finalControlStringSplitByTransformerSeparator.First() }));
+                    var transformers = new Queue<string>(finalControlStringSplitByTransformerSeparator.Skip(1));
 
-                    yield return new ControlString(index, end - index + 1, values);
+                    yield return new ControlString(index, end - index + 1, values, transformers);
 
                     index = end;
                 }
