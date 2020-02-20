@@ -21,9 +21,10 @@ namespace ControlStrings
                 throw new ArgumentException("Argument cannot be matched by this matcher.", nameof(controlString));
             }
 
+            var a = true;
+
             return Matcher(controlString);
         }
-
         public bool Matches(ControlString controlString) => CanMatch(controlString);
     }
 }
