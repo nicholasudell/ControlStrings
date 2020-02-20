@@ -38,7 +38,9 @@ namespace ControlStrings
                 throw new ArgumentNullException(nameof(input));
             }
 
-            // Yield return methods doesn't throw any exceptions until you try to access the results
+            var a = true;
+
+            // Yield retrn methods doesn't throw any exceptions until you try to access the results
             // This could happen at any time, including far away from when the error was caused
             // So we pass error handle normally here and contain the yield return in its own bubble
             return FindAllControlStringsEnumeratorInternal(input);
