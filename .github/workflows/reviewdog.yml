@@ -17,11 +17,11 @@ jobs:
     name: runner / dotnet
     runs-on: ubuntu-latest
     steps:
-        - name: Check out code.
+      - name: Check out code.
         uses: actions/checkout@v1
-        - name: reviewdog
+      - name: reviewdog
         uses: udellgames/reviewdog-csharp
         with:
-            github_token: ${{ secrets.github_token }}
-            locale: "UK"
-            level: 'warning'
+          github_token: ${{ secrets.github_token }}
+          locale: "UK"
+          level: 'warning'
