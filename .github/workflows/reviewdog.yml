@@ -20,7 +20,7 @@ jobs:
       - name: Check out code.
         uses: actions/checkout@v1
       - name: reviewdog
-        uses: udellgames/reviewdog-csharp
+        uses: udellgames/reviewdog-csharp@master
         with:
           github_token: ${{ secrets.github_token }}
           locale: "UK"
